@@ -6,13 +6,12 @@
 //
 
 // @Incomplete:
-// - Add linux support, should be 1000x simpler than getting windows working with ETW. Atm the api implementations in this
-//   file are windows specific!
+// - Casey has updated his version to 1) Use a service, I think to avoid needing the user app to have admin rights, 2) remove mapping of pmc names, and start defining counter names explicitly?
+// - Add linux support, should be 1000x simpler than getting windows working with ETW. Atm the api implementations in this file are windows specific!
 // - Support nested regions. Not sure what will happen atm, but it for sure won't work!
 
 // @TODO(Charles) Fixes: 
-// - :ReusingMarkerWithNewTracer Now we support multiple tracer objects we have to be more careful with whether our
-//   traced_threads are being used with the correct tracer (and maybe the event_handler needs to check too?)
+// - :ReusingMarkerWithNewTracer Now we support multiple tracer objects we have to be more careful with whether our traced_threads are being used with the correct tracer (and maybe the event_handler needs to check too?)
 
 // NOTE(Charles): Changing collected sources after start_tracing.
 // I tried to implement some "set_new_sources" procedure you could call after you had started a session with start_tracing.
@@ -83,6 +82,7 @@ PMC_Traced_Thread_Data :: struct {
 
     pmcs:       [MAX_PMC] u64; // The pmc values accumulate while this thread was active
     pmcs_start: [MAX_PMC] u64; // The pmc at the start of execution, either the actual start, or after a context switch. Need a separate array rather than reusing pmcs because the counter values across cores will be different!
+    // @TODO: Do the - on open, + on close trick to only keep one array here.
 }
 
 // @TODO(Charles): Track how many times this region was context switched
