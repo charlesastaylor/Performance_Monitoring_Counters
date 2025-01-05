@@ -5,7 +5,7 @@
 
 #import,dir "../../Windows_Event_Tracing"; // :BlastedModuleOrganization
 
-context_pointer: *Context;
+context_pointer: *#Context;
 
 running := true;
 
@@ -166,11 +166,11 @@ TraceEventRecordCallback :: (event: *EVENT_RECORD) #c_call {
         if opcode == EVENT_TRACE_TYPE_LOAD || opcode == EVENT_TRACE_TYPE_DC_START {
             data := cast(*Image_Load) event.UserData;
             filename := *data.FileName;
-            print("[%] Image Load, FileName=%, ProcessId=%\n", tsc, wide_to_utf8_new(filename,, temp), data.ProcessId);
+            print("[%] Image Load, FileName=%, ProcessId=%\n", tsc, wide_to_utf8(filename,, temp), data.ProcessId);
         } else if opcode == EVENT_TRACE_TYPE_END || opcode == EVENT_TRACE_TYPE_DC_END {
             data := cast(*Image_Load) event.UserData;
             filename := *data.FileName;
-            print("[%] Image Unload, FileName=%, ProcessId=%\n", tsc, wide_to_utf8_new(filename,, temp), data.ProcessId);
+            print("[%] Image Unload, FileName=%, ProcessId=%\n", tsc, wide_to_utf8(filename,, temp), data.ProcessId);
         }
     } else if provider == ProcessGuid {
         if opcode == EVENT_TRACE_TYPE_START || opcode == EVENT_TRACE_TYPE_DC_START {
@@ -179,7 +179,7 @@ TraceEventRecordCallback :: (event: *EVENT_RECORD) #c_call {
             sidlen := GetLengthSid(sid); // 8 + 4 * sid.SubAuthorityCount
             filename := cast(*u8) sid + sidlen;
             cmdline := cast(*u16)(filename + c_style_strlen(filename) + 1);
-            print("[%] Process Start, ProcessId=%, ImageFileName=%, CommandLine=%\n", tsc, data.ProcessId, filename, wide_to_utf8_new(cmdline,, temp));
+            print("[%] Process Start, ProcessId=%, ImageFileName=%, CommandLine=%\n", tsc, data.ProcessId, filename, wide_to_utf8(cmdline,, temp));
         } else if opcode == EVENT_TRACE_TYPE_END || opcode == EVENT_TRACE_TYPE_DC_END {
             data := cast(*Process_TypeGroup1) event.UserData;
             print("[%] Process Stop, ProcessId=%\n", tsc, data.ProcessId);
@@ -187,10 +187,10 @@ TraceEventRecordCallback :: (event: *EVENT_RECORD) #c_call {
     } else if provider == ThreadGuid {
         if opcode == EVENT_TRACE_TYPE_START || opcode == EVENT_TRACE_TYPE_DC_START {
             data := cast(*Thread_TypeGroup1) event.UserData;
-            print("[%] Thread Start, ProcessId=%, ThreadId=%, ThreadName=%\n", tsc, data.ProcessId, data.TThreadId, wide_to_utf8_new(*data.ThreadName,, temp));
+            print("[%] Thread Start, ProcessId=%, ThreadId=%, ThreadName=%\n", tsc, data.ProcessId, data.TThreadId, wide_to_utf8(*data.ThreadName,, temp));
         } else if opcode == EVENT_TRACE_TYPE_END || opcode == EVENT_TRACE_TYPE_DC_END {
             data := cast(*Thread_TypeGroup1) event.UserData;
-            print("[%] Thread Stop, ProcessId=%, ThreadId=%, ThreadName=%\n", tsc, data.ProcessId, data.TThreadId, wide_to_utf8_new(*data.ThreadName,, temp));
+            print("[%] Thread Stop, ProcessId=%, ThreadId=%, ThreadName=%\n", tsc, data.ProcessId, data.TThreadId, wide_to_utf8(*data.ThreadName,, temp));
         } else if opcode == 0x24 { // PERFINFO_LOG_TYPE_CONTEXTSWAP
             data := cast(*CSwitch) event.UserData;
             print("[%] Context Switch, NewThreadId=%, OldThreadId=%, CPU=%\n", tsc, data.NewThreadId, data.OldThreadId, cpu);

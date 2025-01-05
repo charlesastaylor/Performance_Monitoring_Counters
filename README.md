@@ -1,4 +1,4 @@
-Jai module to enable collecting Performance-Monitoring Counters (PMCs) thread-safe, continuously on a running program.
+Jai module to enable collecting Performance-Monitoring Counters (PMCs) thread-safe, continuously on a running program. Last tested on beta 0.2.006.
 
 Inspired (and significantly aided!) by ["The Computer Enhance 2024 International Event Tracing for Windows Halloween
 Spooktacular Challenge"](https://www.computerenhance.com/p/announcing-the-etw-halloween-spooktacular).

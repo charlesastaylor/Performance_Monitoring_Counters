@@ -116,7 +116,7 @@ MP_ArmCounters :: string.[
 // If change to jai threads then the threads we create at least wont have that issue, the ETW callback will still though.
 
 MiniPerf__Callback :: (Event: *EVENT_RECORD) #c_call {
-    dummy_context: Context;
+    dummy_context: #Context;
     push_context,defer_pop dummy_context; // :WhatDoAboutContexts
 
     Provider := *Event.EventHeader.ProviderId;
@@ -163,7 +163,7 @@ MiniPerf__ProcessThread :: (Arg: *void) -> u32 #c_call {
 
 MiniPerf__FunThread :: (Arg: *void) -> u32 #c_call {
     // :WhatDoAboutContexts
-    dummy_context: Context;
+    dummy_context: #Context;
     push_context dummy_context {
         mp_context := cast(*MiniPerfContext) Arg;
         mp_context.StartTime = seconds_since_init();
@@ -225,7 +225,7 @@ MiniPerf :: (Fun: MiniPerfFun, Arg: *void) -> MiniPerfResult {
             Info := cast(*PROFILE_SOURCE_INFO)(Buffer.data + Offset);
 
             for 0..cast(u32)Counter.COUNT-1 {
-                Description := wide_to_utf8_new(Info.Description.data,, temp);
+                Description := wide_to_utf8(Info.Description.data,, temp);
 
                 if Description == CounterNames[it] {
                     CounterSources[CounterCount] = Info.Source;

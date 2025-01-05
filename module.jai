@@ -46,7 +46,7 @@ PMC_Tracer :: struct {
     consumer_trace_handle: TRACEHANDLE;
 
     event_processing_thread: Thread;
-    event_processing_thread_context: *Context;
+    event_processing_thread_context: *#Context;
 
     sources: [] PMC_Source;
 
@@ -200,7 +200,7 @@ get_available_pmcs :: () -> [] PMC_Source {
         source := cast(*PROFILE_SOURCE_INFO) cursor;
 
         pmc := array_add(*available_pmcs);
-        pmc.name = Windows_Utf8.wide_to_utf8_new(source.Description.data);
+        pmc.name = Windows_Utf8.wide_to_utf8(source.Description.data);
         pmc.id = source.Source;
 
         // NOTE(Charles): Code to query for the current interval, and also record the min/max interval of source. I no 
